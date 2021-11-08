@@ -8,9 +8,9 @@ def deploy_paciente():
     if len(Paciente)<=0:
         account=get_account('paciente')
         contrato=Paciente.deploy({"from": account})
-        print('=========== Contato deployado :) ===========')
+        print('=========== Contrato deployado :) ===========')
     else:
-        print('=========== Contato ja foi deployado ===========')  
+        print('=========== Contrato ja foi deployado ===========')  
         contrato=get_contract(Paciente)
     return contrato
 
