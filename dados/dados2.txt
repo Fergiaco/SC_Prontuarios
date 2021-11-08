@@ -1,0 +1,13 @@
+Patient Id 1
+Gender
+Age
+Disease
+Diagnosis
+Location
+Medication
+Suggestion
+Next Review
+Notes
+Date
+Doctor’s Name
+Hospital Id

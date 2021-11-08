@@ -1,0 +1,10 @@
+dotenv: .env
+wallets:
+  paciente: ${PRIVATE_KEY}
+  hospital: ${PRIVATE_KEY2}
+
+networks:
+  default: private
+
+
+
