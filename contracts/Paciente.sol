@@ -13,13 +13,13 @@ contract Paciente {
     string cid;
     }
 
-    infos public info;
-    string public text;
-    address public owner;
+    address private owner;
     infos[] prontuarios;
+    infos private info;
+    mapping(address => bool) public whitelist;
 
-    constructor() {
-        owner = msg.sender;
+    constructor(address _paciente) {
+        owner = _paciente;
     }
 
     error Unauthorized();
@@ -35,16 +35,46 @@ contract Paciente {
         _;
     }
 
-    function add(string memory _dados, string memory _cid) public onlyBy(owner) {
+    function isMember(address _member) public view returns(bool){
+        return whitelist[_member];
+    }
+
+    //Somente a administracao pode adicionar acesso
+    function addMember(address _member) onlyBy(owner) public {
+         require(
+            !isMember(_member),
+            "Address is member already."
+        );
+
+        whitelist[_member] = true;
+        //emit MemberAdded(_member);
+    }
+
+    //Paciente pode remover
+    function removeMember(address _member) onlyBy(owner) public {
+        {
+        require(
+            isMember(_member),
+            "Not member of whitelist."
+        );
+
+        delete whitelist[_member];
+        //emit MemberRemoved(_member);
+        }
+    }
+
+    //Membros podem adicionar prontuarios
+    function add(string memory _dados, string memory _cid) public {
+        require(
+            isMember(msg.sender),
+            "Not member of whitelist."
+        );
         info=infos(_dados,_cid);
         prontuarios.push(info);
     }
 
-    function remove(uint _index) public onlyBy(owner) {
-        delete(prontuarios[_index]);
-    }
-
-    function get() public view onlyBy(owner)  returns (infos[] memory) {
+    //Paciente pode acessar prontuarios
+    function get() public onlyBy(owner) view returns(infos[] memory) {
         return prontuarios;
     }
 
