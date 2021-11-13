@@ -53,11 +53,6 @@ contract Paciente {
     //Paciente pode remover
     function removeMember(address _member) onlyBy(owner) public {
         {
-        require(
-            isMember(_member),
-            "Not member of whitelist."
-        );
-
         delete whitelist[_member];
         //emit MemberRemoved(_member);
         }

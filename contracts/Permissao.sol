@@ -34,9 +34,18 @@ contract Permissao{
     
     }
 
-    function removePront(string memory _combinacao) onlyBy(owner) public {
-        delete cids[_combinacao];
-    
+    function removePront(string memory _combinacao,string memory _cid) onlyBy(owner) public {
+        require(cids[_combinacao].length>0,
+            "Esse Hospital nao tem permissao");
+        
+        //percorre cids
+        for (uint i = 0; i < cids[_combinacao].length; i++) {
+            //se cid for igual ao cid que deseja remover -> troca de lugar com o ultimo e pop()
+            if(keccak256(bytes(cids[_combinacao][i])) == keccak256(bytes(_cid))){
+                cids[_combinacao][i]=cids[_combinacao][cids[_combinacao].length-1];
+                cids[_combinacao].pop();
+            }
+        }
     }
 
     function get(string memory _combinacao) public view returns(string[] memory){

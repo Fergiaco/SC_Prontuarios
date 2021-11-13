@@ -1,7 +1,10 @@
+
 dotenv: .env
 wallets:
-  paciente: ${PRIVATE_KEY}
-  hospital: ${PRIVATE_KEY2}
+  paciente_1: ${PK1}
+  paciente_2: ${PK2}
+  hosp_1: ${PK3}
+  hosp_2: ${PK4}
 
 networks:
   default: private
