@@ -7,18 +7,19 @@ class hospital:
     def __init__(self,nome):
         self.nome=nome
         self.pacientes=self.importaPacientes()
-
+        
     #Hospital cria ficha para o paciente
     def cria_ficha(self,paciente):
         if paciente in self.pacientes: 
-            print('===========Paciente ',paciente,' já tem uma ficha===========\n')
+            print('\n===========Paciente ',paciente,' já tem uma ficha===========\n')
             return self.pacientes[paciente][0],self.pacientes[paciente][1]
         else:
             account=get_account(self.nome)
+            print('\n=========== Criando ficha para o paciente ',paciente,'===========\n')
             contrato1=Paciente.deploy(paciente,{"from": account})
             contrato2=Permissao.deploy(paciente,{"from": account})
-            print('=========== Ficha criada para o paciente ',paciente,'===========\n')
-            self.pacientes[paciente]=[contrato1,contrato2]
+            print('\n=========== Ficha criada para o paciente ',paciente,'===========\n')
+            self.pacientes[paciente]=[contrato1,contrato2,[]]
             self.salvaPacientes()
             return contrato1,contrato2
             
@@ -26,14 +27,20 @@ class hospital:
     def add_prontuario(self,paciente,dados,cid):
         account=get_account(self.nome)
         p=get_account(paciente)
-        try:
-            contrato=get_contract(self.pacientes[p][0],Paciente)
-            contrato.add(dados,cid,{"from": account})
-            print('=========== Prontuario adicionado ',dados,'===========\n')
-            #return contrato
-        except:
-            print('Prontuario não Encontrado')
-
+        if p not in self.pacientes:
+            print(paciente,'Não ainda não tem uma ficha no',self.nome)
+        elif dados not in self.pacientes[p][2]:
+            try:
+                contrato=get_contract(self.pacientes[p][0],Paciente)
+                contrato.add(dados,cid,{"from": account})
+                print('=========== Prontuario adicionado ',dados,'===========\n')
+                self.pacientes[p][2].append(dados)
+                self.salvaPacientes()
+                #return contrato
+            except:
+                print('O hospital não tem permissão para adicionar esse prontuário')
+        else:
+            print(self.nome,'já adicionou esse prontuário para',p)
 
     def get(self,paciente):
         account=get_account(self.nome)
@@ -42,27 +49,33 @@ class hospital:
         contrato=get_contract(self.pacientes[p][1],Permissao)
         try:
             r=contrato.get(combinado,{"from": account})
+            #print(r)
         except:
             print(self.nome,'Não tem Permissão\n')
         return r
     
     def importaPacientes(self):
         try:
-            file=open('./dados/map.txt','x')
+            file=open('./dados/hosp/'+self.nome+'.txt','x')
         except:
             pass
         pacientes={}
-        file=open('./dados/map.txt','r')
+        file=open('./dados/hosp/'+self.nome+'.txt','r')
         for linha in file:
-            l=linha.split(',')
-            pacientes[l[0]]=[l[1],l[2]]
+            l=linha.split('; ')
+            pacientes[l[0]]=[l[1],l[2],l[3].split(',')]
         return pacientes
 
     def salvaPacientes(self):
-        file=open('./dados/map.txt','a')
+        #self.pacientes=self.importaPacientes()
+        file=open('./dados/hosp/'+self.nome+'.txt','w')
         for paciente in self.pacientes.keys():
-            s=str(paciente)+','+str(self.pacientes[paciente][0])+','+str(self.pacientes[paciente][1])+'\n'
+            dados=''
+            for dado in self.pacientes[paciente][2]:
+                dados+=dado+','
+            s=str(paciente)+'; '+str(self.pacientes[paciente][0])+'; '+str(self.pacientes[paciente][1])+'; '+dados[:-1]+'; \n'
             file.write(s)
         file.close()
+
 
     
