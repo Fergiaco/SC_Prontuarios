@@ -32,6 +32,7 @@ class paciente:
 
     #printa o Prontuario escolhido
     def get_pront(self):
+        print("\n===================================================")
         print('Dados do Paciente',self.nome)
         r=self.get()
         if len(r)>0:
@@ -39,23 +40,36 @@ class paciente:
             while x>len(r) or x<0:
                 x=int(input('Digite um valor valido\n'))
             #print('\n',r[x][1],'\n')
-            return r[x][1]
+            return r[x]
         else:print('Nenhum prontuario salvo\n')
 
     def addCombinacao(self,hosp):
-        cid=self.get_pront()
+        print("\n===================================================")
+        print('Escolha o dado que deseja compartilhar com ',hosp)
+        r=self.get_pront()
+        info=r[0]
+        cid=r[1]
         account=get_account(self.nome)
         combinado=str(get_account(hosp))+str(account)
         contrato=get_contract(self.contratos[1],Permissao)
-        contrato.addPront(combinado,cid,{"from": account})
-        print('Combinacao Adicionada - Permissao adicionada para',hosp)
+        perms=contrato.getPronts(combinado,{"from": account})
+        if cid not in perms:
+            contrato.addPront(combinado,cid,{"from": account})
+            print('Permissao adicionada para',hosp,' - ',info)
+        else:
+            print(hosp,'Já tem permissao de acesso para',info)
 
     def removeCombinacao(self,hosp,cid):
+        print("\n===================================================")
+        print('Escolha o dado que deseja revogar a permissao de',hosp)
+        r=self.get_pront()
+        info=r[0]
+        cid=r[1]
         account=get_account(self.nome)
         combinado=str(get_account(hosp))+str(account)
         contrato=get_contract(self.contratos[1],Permissao)
         try:
             contrato.removePront(combinado,cid,{"from": account})
-            print(hosp,'perdeu o Acesso do',cid)
+            print(hosp,'perdeu o Acesso do',info)
         except:
-            print(hosp,'já está sem Permisssao para',self.nome,' - ',cid )
+            print(hosp,'já está sem Permisssao para ',info )

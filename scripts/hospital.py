@@ -11,14 +11,14 @@ class hospital:
     #Hospital cria ficha para o paciente
     def cria_ficha(self,paciente):
         if paciente in self.pacientes: 
-            print('\n===========Paciente ',paciente,' já tem uma ficha===========\n')
+            print('\n===========Paciente ',paciente,' já tem uma ficha===========')
             return self.pacientes[paciente][0],self.pacientes[paciente][1]
         else:
             account=get_account(self.nome)
-            print('\n=========== Criando ficha para o paciente ',paciente,'===========\n')
+            print('\n=========== Criando ficha para o paciente ',paciente,'===========')
             contrato1=Paciente.deploy(paciente,{"from": account})
             contrato2=Permissao.deploy(paciente,{"from": account})
-            print('\n=========== Ficha criada para o paciente ',paciente,'===========\n')
+            print('\n=========== Ficha criada para o paciente ',paciente,'===========')
             self.pacientes[paciente]=[contrato1,contrato2,[]]
             self.salvaPacientes()
             return contrato1,contrato2
@@ -33,26 +33,39 @@ class hospital:
             try:
                 contrato=get_contract(self.pacientes[p][0],Paciente)
                 contrato.add(dados,cid,{"from": account})
-                print('=========== Prontuario adicionado ',dados,'===========\n')
+                print('\n=========== Prontuario adicionado ',dados,'===========')
                 self.pacientes[p][2].append(dados)
                 self.salvaPacientes()
                 #return contrato
             except:
-                print('O hospital não tem permissão para adicionar esse prontuário')
+                print('\nO hospital não tem permissão para adicionar esse prontuário')
         else:
             print(self.nome,'já adicionou esse prontuário para',p)
 
     def get(self,paciente):
         account=get_account(self.nome)
         p=get_account(paciente)
+        print("\n===================================================")
+        print('Cids Disponibilizados pelo Paciente ',paciente,p,'\n')
         combinado=str(account)+str(p)
         contrato=get_contract(self.pacientes[p][1],Permissao)
         try:
             r=contrato.get(combinado,{"from": account})
-            #print(r)
+            print(r)
         except:
-            print(self.nome,'Não tem Permissão\n')
+            print(self.nome,'Não tem Permissão para acessar dados do paciente',paciente,' \n')
         return r
+
+    def importaDados(self,hosp):
+        print("\n===================================================")
+        print(self.nome,"- importando dados de ",hosp.nome)
+        file=open('./dados/hosp/'+hosp.nome+'.txt','r')
+        for linha in file:
+            l=linha.split('; ')
+            self.pacientes[l[0]]=[l[1],l[2],l[3].split(',')]
+        self.salvaPacientes()
+        
+
     
     def importaPacientes(self):
         try:
@@ -67,7 +80,6 @@ class hospital:
         return pacientes
 
     def salvaPacientes(self):
-        #self.pacientes=self.importaPacientes()
         file=open('./dados/hosp/'+self.nome+'.txt','w')
         for paciente in self.pacientes.keys():
             dados=''
