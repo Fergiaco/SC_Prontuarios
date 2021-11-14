@@ -29,6 +29,10 @@ contract Permissao{
         _;
     }
 
+    function getPronts(string memory _combinacao) onlyBy(owner) public view returns(string[] memory) {
+        return cids[_combinacao];
+    }
+
     function addPront(string memory _combinacao,string memory _cid) onlyBy(owner) public {
         cids[_combinacao].push(_cid);
     
