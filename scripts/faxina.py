@@ -2,8 +2,18 @@ import shutil
 import os
 
 #Deleta Dados armazenados
-shutil.rmtree('./build/deployments')
-shutil.rmtree('./dados/hosp')
-os.mkdir('./dados/hosp')
+try:
+    shutil.rmtree('./build/deployments')
+except:
+    pass
+try:
+    shutil.rmtree('./dados/hosp')
+except:
+    pass
+try:
+    os.mkdir('./dados/hosp')
+except:
+    pass
+
 print('\nDados Sobre Contratos Deletados\n')
 exit()
