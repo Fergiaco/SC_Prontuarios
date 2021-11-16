@@ -2,9 +2,16 @@ from brownie import Paciente,Permissao
 from scripts.help import get_account,get_contract
 import scripts.ipfs as ipfs
 from scripts.paciente import paciente
+import random
+import os
 
 class hospital:
     def __init__(self,nome):
+        try:
+            os.mkdir('./dados/hosp/'+nome)
+        except:
+            pass
+
         self.nome=nome
         self.pacientes=self.importaPacientes()
         
@@ -22,6 +29,35 @@ class hospital:
             self.pacientes[paciente]=[contrato1,contrato2,[]]
             self.salvaPacientes()
             return (contrato1,contrato2)
+
+    def geraPront(self,paciente):
+        data=str(random.randint(1,28))+'-'+str(random.randint(1,12))+'-'+str(random.randint(1920,2021))
+        dados=paciente.nome+'-'+data+'-'+self.nome
+
+        path='./dados/hosp/'+self.nome+'/'+dados+'.txt'
+        print(path)
+
+        try:
+            pront=open(path,'x')
+        except:
+            pront=open(path,'w')
+
+        modelo=open('./dados/modelo.txt')
+        for linha in modelo:
+            linha=linha.replace('\n','')
+
+            if 'Patient Id' in linha:
+                linha+=paciente.nome
+                print(linha)
+            elif 'Date' in linha:
+                linha+=data
+                print(linha)
+            elif 'Hospital Id' in linha:
+                linha+=self.nome
+
+            pront.write(linha+'\n')
+
+        return(path,dados)
             
     #Hospital adiciona prontuario para contrato paciente se tiver permissao
     def add_prontuario(self,paciente,dados,cid):
@@ -62,7 +98,7 @@ class hospital:
     def importaDados(self,hosp):
         print("\n===================================================")
         print(self.nome,"- importando dados de ",hosp.nome)
-        file=open('./dados/hosp/'+hosp.nome+'.txt','r')
+        file=open('./dados/hosp/'+hosp.nome+'/infos.txt','r')
         for linha in file:
             l=linha.split('; ')
             self.pacientes[l[0]]=[l[1],l[2],l[3].split(',')]
@@ -70,18 +106,22 @@ class hospital:
         
     def importaPacientes(self):
         try:
-            file=open('./dados/hosp/'+self.nome+'.txt','x')
+            file=open('./dados/hosp/'+self.nome+'/infos.txt','x')
+        except:
+            pass
+        try:
+            file=open('./dados/hosp/'+self.nome+'/infos.txt','x')
         except:
             pass
         pacientes={}
-        file=open('./dados/hosp/'+self.nome+'.txt','r')
+        file=open('./dados/hosp/'+self.nome+'/infos.txt','r')
         for linha in file:
             l=linha.split('; ')
             pacientes[l[0]]=[l[1],l[2],l[3].split(',')]
         return pacientes
 
     def salvaPacientes(self):
-        file=open('./dados/hosp/'+self.nome+'.txt','w')
+        file=open('./dados/hosp/'+self.nome+'/infos.txt','w')
         for paciente in self.pacientes.keys():
             dados=''
             for dado in self.pacientes[paciente][2]:

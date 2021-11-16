@@ -2,6 +2,7 @@ from scripts.hospital import hospital
 from scripts.paciente import paciente
 from scripts.help import get_account
 from brownie import Paciente,Permissao
+import scripts.ipfs as ipfs 
 
 #Fazer 
 # Upload ipfs 
@@ -9,11 +10,17 @@ from brownie import Paciente,Permissao
 
 def passoInicial(p,h):
     p.contratos=h.cria_ficha(get_account(p.nome))
-    #p.contratos=(c1,c2)
+    prontuario=h.geraPront(p)
+    print(prontuario)
+    dados=prontuario[1]
+    path=prontuario[0]
+    #cid=ipfs.add('./dados/hosp/'+h.nome+'/'+path+'.txt')
+    cid=ipfs.add(path)
     #da permissao para adicionar prontuarios
     p.addMember(get_account(h.nome))
+
     #add prontuarios
-    h.add_prontuario(p.nome,'dados'+p.nome,'cid'+p.nome)
+    h.add_prontuario(p.nome,dados,cid)
     
 def visualizacaoPaciente(p):
     p.getPront()
