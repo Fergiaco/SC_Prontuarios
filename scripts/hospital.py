@@ -1,6 +1,6 @@
 from brownie import Paciente,Permissao
 from scripts.help import get_account,get_contract
-from scripts.ipfs import add,cat
+import scripts.ipfs as ipfs
 from scripts.paciente import paciente
 
 class hospital:
@@ -25,6 +25,9 @@ class hospital:
             
     #Hospital adiciona prontuario para contrato paciente se tiver permissao
     def add_prontuario(self,paciente,dados,cid):
+        #ipfs
+        #dados=info extraida do prontuario
+        #cid =ipfs.add(file)
         account=get_account(self.nome)
         p=get_account(paciente)
         if p not in self.pacientes:
@@ -46,7 +49,7 @@ class hospital:
         account=get_account(self.nome)
         p=get_account(paciente)
         print("\n===================================================")
-        print('Cids Disponibilizados pelo Paciente ',paciente,p,'\n')
+        print('Cids Disponibilizados pelo Paciente ',paciente,p,'para o',self.nome,'\n')
         combinado=str(account)+str(p)
         contrato=get_contract(self.pacientes[p][1],Permissao)
         try:
@@ -65,8 +68,6 @@ class hospital:
             self.pacientes[l[0]]=[l[1],l[2],l[3].split(',')]
         self.salvaPacientes()
         
-
-    
     def importaPacientes(self):
         try:
             file=open('./dados/hosp/'+self.nome+'.txt','x')

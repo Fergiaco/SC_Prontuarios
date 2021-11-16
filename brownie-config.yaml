@@ -1,8 +1,8 @@
 
 dotenv: .env
 wallets:
-  paciente_1: ${PK1}
-  paciente_2: ${PK2}
+  benno: ${PK1}
+  waldyr: ${PK2}
   hosp_1: ${PK3}
   hosp_2: ${PK4}
 

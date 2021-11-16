@@ -32,7 +32,7 @@ class paciente:
 
     #printa o Prontuario escolhido
     def get_pront(self):
-        print("\n===================================================")
+        print("\n---------------------------------------------------")
         print('Dados do Paciente',self.nome)
         r=self.get()
         if len(r)>0:
@@ -59,17 +59,17 @@ class paciente:
         else:
             print(hosp,'Já tem permissao de acesso para',info)
 
-    def removeCombinacao(self,hosp,cid):
+    def removeCombinacao(self,hosp):
         print("\n===================================================")
-        print('Escolha o dado que deseja revogar a permissao de',hosp)
+        print('Escolha o dado que deseja revogar a permissao de',hosp.nome)
         r=self.get_pront()
         info=r[0]
         cid=r[1]
         account=get_account(self.nome)
-        combinado=str(get_account(hosp))+str(account)
+        combinado=str(get_account(hosp.nome))+str(account)
         contrato=get_contract(self.contratos[1],Permissao)
         try:
             contrato.removePront(combinado,cid,{"from": account})
-            print(hosp,'perdeu o Acesso do',info)
+            print(hosp.nome,'perdeu o Acesso do',info)
         except:
-            print(hosp,'já está sem Permisssao para ',info )
+            print(hosp.nome,'já está sem Permisssao para ',info )
