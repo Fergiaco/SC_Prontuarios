@@ -21,7 +21,7 @@ class hospital:
             print('\n=========== Ficha criada para o paciente ',paciente,'===========')
             self.pacientes[paciente]=[contrato1,contrato2,[]]
             self.salvaPacientes()
-            return contrato1,contrato2
+            return (contrato1,contrato2)
             
     #Hospital adiciona prontuario para contrato paciente se tiver permissao
     def add_prontuario(self,paciente,dados,cid):

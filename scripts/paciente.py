@@ -5,6 +5,8 @@ class paciente:
     def __init__(self,nome):
         self.nome=nome
         self.contratos=()
+        #self.privatekey
+
 
     def addMember(self,hosp):
         account=get_account(self.nome)

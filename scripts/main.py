@@ -4,13 +4,12 @@ from scripts.help import get_account
 from brownie import Paciente,Permissao
 
 #Fazer 
-# Repoduzir uma transacao seguindo os passos criados
 # Upload ipfs 
-# criptografia
+# criptografia v
 
 def passoInicial(p,h):
-    c1,c2=h.cria_ficha(get_account(p.nome))
-    p.contratos=(c1,c2)
+    p.contratos=h.cria_ficha(get_account(p.nome))
+    #p.contratos=(c1,c2)
     #da permissao para adicionar prontuarios
     p.addMember(get_account(h.nome))
     #add prontuarios
