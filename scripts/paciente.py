@@ -1,6 +1,7 @@
 from brownie import  Paciente,Permissao
 from scripts.help import get_account,get_contract
 from scripts.ipfs import add,cat
+
 class paciente:
     def __init__(self,nome):
         self.nome=nome
