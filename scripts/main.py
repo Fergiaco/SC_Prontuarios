@@ -11,15 +11,15 @@ import scripts.ipfs as ipfs
 def passoInicial(p,h):
     p.contratos=h.cria_ficha(get_account(p.nome))
     prontuario=h.geraPront(p)
-    print(prontuario)
-    dados=prontuario[1]
     path=prontuario[0]
-    #cid=ipfs.add('./dados/hosp/'+h.nome+'/'+path+'.txt')
+    dados=prontuario[1]
+
+    #Envia pro ipfs
     cid=ipfs.add(path)
+
     #da permissao para adicionar prontuarios
     p.addMember(get_account(h.nome))
-
-    #add prontuarios
+    #add combinacao (dados - cid) referente ao prontuario no contrato 1 de um paciente 
     h.add_prontuario(p.nome,dados,cid)
     
 def visualizacaoPaciente(p):
