@@ -85,20 +85,28 @@ class paciente:
         combinado=str(get_account(hosp.nome))+str(account)
         contrato=get_contract(self.contratos[1],Permissao)
         perms=contrato.getPronts(combinado,{"from": account})
-        if cid not in perms:
-            contrato.addPront(combinado,cid,{"from": account})
-            print('Permissao adicionada para',hosp.nome,' - ',info)
-        else:
-            print(hosp.nome,'Já tem permissao de acesso para',info)
+        print(perms)
+        for perm in perms:
+            if info in perm:
+                print(hosp.nome,'Já tem permissao de acesso para',info)
+                return False
+        
+        contrato.addPront(combinado,cid,{"from": account})
+        print('Permissao adicionada para',hosp.nome,' - ',info)
+        
 
     def removeCombinacao(self,hosp):
-        print("\n===================================================")
-        print('Escolha o dado que deseja revogar a permissao de',hosp.nome)
         account=get_account(self.nome)
         contrato=get_contract(self.contratos[1],Permissao)
         combinado=str(get_account(hosp.nome))+str(account)
         r=contrato.getPronts(combinado,{"from": account})
+        if len(r)==0:
+            print(hosp.nome,'já está sem Permisssao')
+            return False
 
+        print("\n===================================================")
+        print('Escolha o dado que deseja revogar a permissao de',hosp.nome)
+        
         try:
             for i in range(len(r)):
                 print(i,'-',r[i])
@@ -106,9 +114,8 @@ class paciente:
             escolha=int(input())
             pront=r[escolha]
             print('pront',pront)
-            info=pront[0]
             contrato.removePront(combinado,pront,{"from": account})
-            print(hosp.nome,'perdeu o Acesso do',info)
+            print(hosp.nome,'perdeu o Acesso do',pront)
         except:
             print(hosp.nome,'já está sem Permisssao')
 

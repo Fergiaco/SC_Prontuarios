@@ -114,6 +114,9 @@ class hospital:
         contrato=get_contract(self.pacientes[p][1],Permissao)
         try:
             r=contrato.get(combinado,{"from": account})
+            if len(r==0):
+                print('Não tem permissao')
+                return False
             print('Qual Prontuario deseja Descriptografar?')
             for x in range(len(r)):
                 dado=r[x].split(',')
