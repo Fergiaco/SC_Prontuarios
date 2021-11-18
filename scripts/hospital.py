@@ -88,6 +88,7 @@ class hospital:
 
         #Envia pro ipfs
         cid=ipfs.add(path)
+        os.remove(path)
 
         if p not in self.pacientes:
             print(paciente.nome,'Não ainda não tem uma ficha no',self.nome)
@@ -113,7 +114,20 @@ class hospital:
         contrato=get_contract(self.pacientes[p][1],Permissao)
         try:
             r=contrato.get(combinado,{"from": account})
-            print(r)
+            print('Qual Prontuario deseja Descriptografar?')
+            for x in range(len(r)):
+                dado=r[x].split(',')
+                print(x,'-',dado[0],'\n')
+
+            escolha=int(input())
+            dado=r[escolha].split(',')
+            cid=dado[1]
+            encrypted=ipfs.cat(cid)
+            decryptor = PKCS1.new(self.importKey())
+            decrypted = decryptor.decrypt(encrypted)
+            print('Vizualizando Prontuario -',dado[0])
+            print(decrypted.decode('utf-8'))
+
         except:
             print(self.nome,'Não tem Permissão para acessar dados do paciente',paciente,' \n')
         return r

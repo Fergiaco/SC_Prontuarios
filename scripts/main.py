@@ -13,6 +13,7 @@ def passoInicial(p,h):
     p.contratos=h.cria_ficha(p.nome)
 
 def consulta(p,h):
+    print(p.nome,'foi consultar em ',h.nome)
     #da permissao para adicionar prontuarios
     p.addMember(get_account(h.nome))
     #add combinacao (dados - cid) referente ao prontuario no contrato 1 de um paciente 
@@ -23,7 +24,7 @@ def visualizacaoPaciente(p):
 
 def addPermissao(p,h):
     #da permissao 
-    p.addCombinacao(h.nome)
+    p.addCombinacao(h)
 
 def removePermissao(p,h):
     #remove permissao 
@@ -35,7 +36,6 @@ def visualizacaoHospital(p,h):
     
 
 def main():
-
     p1=paciente('benno')
     p2=paciente('waldyr')
     
@@ -46,29 +46,27 @@ def main():
     passoInicial(p1,h1)
     #consulta(p1,h1)
     
-    passoInicial(p2,h2)
+    #passoInicial(p2,h2)
     #consulta(p1,h1)
 
-    visualizacaoPaciente(p1)
-    exit()
     #dados atualizados entre hospitais
-    h2.importaDados(h1)
-    h1.importaDados(h2)
+    #h2.importaDados(h1)
+    #h1.importaDados(h2)
 
     #Da permissao de acesso
-    addPermissao(p1,h1)
-    addPermissao(p1,h2)
-    addPermissao(p2,h2)
+    #addPermissao(p1,h1)
+    #addPermissao(p1,h2)
+    #addPermissao(p2,h2)
     
     #Funciona
     visualizacaoHospital(p1,h1)
-    visualizacaoHospital(p1,h2)
-    visualizacaoHospital(p2,h2)
+    #visualizacaoHospital(p1,h2)
+    #visualizacaoHospital(p2,h2)
 
     #Nao funciona
-    visualizacaoHospital(p2,h1)
+    #visualizacaoHospital(p2,h1)
 
-    removePermissao(p1,h2)
+    removePermissao(p1,h1)
 
     #Nao funciona
     visualizacaoHospital(p1,h2)

@@ -1,3 +1,4 @@
+import os
 from brownie import  Paciente,Permissao
 from scripts.help import get_account,get_contract
 import scripts.ipfs as ipfs
@@ -51,48 +52,67 @@ class paciente:
             info=r[x][0]
             cid=r[x][1]
             encrypted=ipfs.cat(cid)
-            #print(encrypted)
             decryptor = PKCS1.new(self.importKey())
             decrypted = decryptor.decrypt(encrypted)
-            file=open('./dados/paciente/'+info,'w')
-            file.write(decrypted.decode('utf-8').replace('\n',''))
+
+            #file=open('./dados/paciente/'+info,'w')
+            
+            #printa prontuario formatado
+            print(info)
+            #print(decrypted.decode('utf-8').replace('\n',''))
+            #retorna desformatado
+            return info,decrypted
 
         else:print('Nenhum prontuario salvo\n')
 
     def addCombinacao(self,hosp):
         print("\n===================================================")
-        print('Escolha o dado que deseja compartilhar com ',hosp)
+        print('Escolha o dado que deseja compartilhar com ',hosp.nome)
         r=self.get_pront()
         info=r[0]
-        cid=r[1]
+        encryptor = PKCS1.new(hosp.publickey)
+        encrypted=encryptor.encrypt(r[1])
+        path='./dados/paciente/'+info
+        file=open(path,'wb')
+        file.write(encrypted)
+        file.close()
+
+        cid=ipfs.add(path)
+        os.remove(path)
+        cid=info+','+cid
+
         account=get_account(self.nome)
-        combinado=str(get_account(hosp))+str(account)
+        combinado=str(get_account(hosp.nome))+str(account)
         contrato=get_contract(self.contratos[1],Permissao)
         perms=contrato.getPronts(combinado,{"from": account})
         if cid not in perms:
             contrato.addPront(combinado,cid,{"from": account})
-            print('Permissao adicionada para',hosp,' - ',info)
+            print('Permissao adicionada para',hosp.nome,' - ',info)
         else:
-            print(hosp,'Já tem permissao de acesso para',info)
+            print(hosp.nome,'Já tem permissao de acesso para',info)
 
     def removeCombinacao(self,hosp):
         print("\n===================================================")
         print('Escolha o dado que deseja revogar a permissao de',hosp.nome)
-        r=self.get_pront()
-        info=r[0]
-        cid=r[1]
         account=get_account(self.nome)
-        combinado=str(get_account(hosp.nome))+str(account)
         contrato=get_contract(self.contratos[1],Permissao)
+        combinado=str(get_account(hosp.nome))+str(account)
+        r=contrato.getPronts(combinado,{"from": account})
+
         try:
-            contrato.removePront(combinado,cid,{"from": account})
+            for i in range(len(r)):
+                print(i,'-',r[i])
+
+            escolha=int(input())
+            pront=r[escolha]
+            print('pront',pront)
+            info=pront[0]
+            contrato.removePront(combinado,pront,{"from": account})
             print(hosp.nome,'perdeu o Acesso do',info)
         except:
-            print(hosp.nome,'já está sem Permisssao para ',info )
+            print(hosp.nome,'já está sem Permisssao')
 
     def importKey(self):
-        
-
         try:
             file=open('./dados/paciente/'+self.nome,'rb')
             k=file.read()
