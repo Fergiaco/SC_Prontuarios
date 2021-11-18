@@ -6,6 +6,16 @@ try:
     shutil.rmtree('./build/deployments')
 except:
     pass
+
+try:
+    shutil.rmtree('./dados/paciente')
+except:
+    pass
+try:
+    os.mkdir('./dados/paciente')
+except:
+    pass
+
 try:
     shutil.rmtree('./dados/hosp')
 except:

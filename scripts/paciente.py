@@ -1,12 +1,18 @@
 from brownie import  Paciente,Permissao
 from scripts.help import get_account,get_contract
-from scripts.ipfs import add,cat
+import scripts.ipfs as ipfs
+from Crypto.PublicKey import RSA
+import Crypto.Cipher.PKCS1_OAEP as PKCS1
 
 class paciente:
     def __init__(self,nome):
         self.nome=nome
         self.contratos=()
-        #self.privatekey
+
+        #Gera chave RSA
+        key=self.importKey()
+        self.publickey = key.publickey()
+        #self.private_key = key.export_key('PEM')
 
 
     def addMember(self,hosp):
@@ -42,8 +48,15 @@ class paciente:
             x=int(input('Digite um valor valido\n'))
             while x>len(r) or x<0:
                 x=int(input('Digite um valor valido\n'))
-            #print('\n',r[x][1],'\n')
-            return r[x]
+            info=r[x][0]
+            cid=r[x][1]
+            encrypted=ipfs.cat(cid)
+            #print(encrypted)
+            decryptor = PKCS1.new(self.importKey())
+            decrypted = decryptor.decrypt(encrypted)
+            file=open('./dados/paciente/'+info,'w')
+            file.write(decrypted.decode('utf-8').replace('\n',''))
+
         else:print('Nenhum prontuario salvo\n')
 
     def addCombinacao(self,hosp):
@@ -76,3 +89,23 @@ class paciente:
             print(hosp.nome,'perdeu o Acesso do',info)
         except:
             print(hosp.nome,'já está sem Permisssao para ',info )
+
+    def importKey(self):
+        
+
+        try:
+            file=open('./dados/paciente/'+self.nome,'rb')
+            k=file.read()
+            k=RSA.import_key(k)
+            #print('chave importada ',self.nome)
+            #key=Cipher_PKCS1_v1_5.new(k)
+            return k
+        except:
+            file=open('./dados/paciente/'+self.nome,'wb')
+            key=RSA.generate(2048)
+            k=key.exportKey('DER')
+            file.write((k))
+            #file.close()
+            print('chave criada ',self.nome)
+            return key
+            

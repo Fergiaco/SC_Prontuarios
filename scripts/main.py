@@ -2,28 +2,24 @@ from scripts.hospital import hospital
 from scripts.paciente import paciente
 from scripts.help import get_account
 from brownie import Paciente,Permissao
-import scripts.ipfs as ipfs 
+import scripts.ipfs as ipfs
+from Crypto.PublicKey import RSA 
 
 #Fazer 
 # Upload ipfs 
 # criptografia v
 
 def passoInicial(p,h):
-    p.contratos=h.cria_ficha(get_account(p.nome))
-    prontuario=h.geraPront(p)
-    path=prontuario[0]
-    dados=prontuario[1]
+    p.contratos=h.cria_ficha(p.nome)
 
-    #Envia pro ipfs
-    cid=ipfs.add(path)
-
+def consulta(p,h):
     #da permissao para adicionar prontuarios
     p.addMember(get_account(h.nome))
     #add combinacao (dados - cid) referente ao prontuario no contrato 1 de um paciente 
-    h.add_prontuario(p.nome,dados,cid)
-    
+    h.add_prontuario(p)
+
 def visualizacaoPaciente(p):
-    p.getPront()
+    print(p.get_pront())
 
 def addPermissao(p,h):
     #da permissao 
@@ -39,15 +35,22 @@ def visualizacaoHospital(p,h):
     
 
 def main():
+
     p1=paciente('benno')
     p2=paciente('waldyr')
+    
     h1=hospital('hosp_1')
     h2=hospital('hosp_2')
 
     #Consulta
     passoInicial(p1,h1)
+    #consulta(p1,h1)
+    
     passoInicial(p2,h2)
+    #consulta(p1,h1)
 
+    visualizacaoPaciente(p1)
+    exit()
     #dados atualizados entre hospitais
     h2.importaDados(h1)
     h1.importaDados(h2)

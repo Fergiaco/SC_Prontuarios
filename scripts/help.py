@@ -5,6 +5,7 @@ from Crypto.Cipher import PKCS1_OAEP
 from Crypto import Random
 from Crypto.Cipher import AES
 import base64
+import binascii
 
 
 #Retorna versao mais recente do contrato 
@@ -16,8 +17,8 @@ def get_contract(address,nome):
 
 def get_account(conta):
     return accounts.add(config["wallets"][conta])
-
-""" def encrypt(raw,key):
+    
+def encrypt(raw,key):
     raw=pad(raw)
     iv = Random.new().read(AES.block_size)
     cipher = AES.new(key, AES.MODE_CBC, iv)
@@ -35,25 +36,6 @@ def decrypt(enc,key):
     iv = enc[:AES.block_size]
     cipher = AES.new(key, AES.MODE_CBC, iv)
     return unpad(cipher.decrypt(enc[AES.block_size:])).decode('utf-8')
-
-def rsa_encrypt_decrypt(message):
-    #key = RSA.generate(2048)
-    key=RSA
-    key=config["wallets"]['paciente']
-    print(key)
-    private_key = key.export_key('PEM')
-    public_key = key.publickey().exportKey('PEM')
-    message = str.encode(message)
-
-    rsa_public_key = RSA.importKey(public_key)
-    rsa_public_key = PKCS1_OAEP.new(rsa_public_key)
-    encrypted_text = rsa_public_key.encrypt(message)
-
-    print('your encrypted_text is : {}'.format(encrypted_text))
+    
 
 
-    rsa_private_key = RSA.importKey(private_key)
-    rsa_private_key = PKCS1_OAEP.new(rsa_private_key)
-    decrypted_text = rsa_private_key.decrypt(encrypted_text)
-
-    print('your decrypted_text is : {}'.format(decrypted_text)) """
